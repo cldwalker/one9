@@ -9,11 +9,8 @@ change 'FileUtils#mkdir_p', 'Returns an array containing directory instead of th
 change 'Date.parse', 'mm/dd/yyyy syntax does not exist anymore'
 change 'Time.parse', 'mm/dd/yyyy syntax does not exist anymore'
 change 'Proc#arity', 'Number of parameters that would not be ignored instead of ...'
-#change 'Object#=~', 'Returns nil instead of false'
-#change 'String#[]', 'Returns string instead of number'
 delete 'Array#choice', 'Use Array#sample instead'
 delete 'String#each', 'Use String#each_line instead'
-delete 'String#to_a', 'Replace with Array()'
 delete 'Kernel#to_a', 'Replace with Array()'
 delete 'Object#type', 'Replace with #class'
 delete 'Array#nitems', "Replace with #compact.size"
@@ -22,3 +19,11 @@ delete 'Symbol#to_int'
 delete 'Hash#indices', 'Replace with #values_at'
 delete 'Array#indices', 'Replace with #values_at'
 delete 'Exception#to_str', 'Replace with #to_s'
+
+# * BUGGY *
+# doesn't work when called in a preload env
+# change 'Object#=~', 'Returns nil instead of false'
+# causes memory leaks
+# change 'String#[]', 'Returns string instead of number'
+# catches extra calls i.e. Array()
+# delete 'String#to_a', 'Replace with Array()'
