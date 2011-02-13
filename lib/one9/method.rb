@@ -29,11 +29,16 @@ module One9
     end
 
     def count
-      COUNTS[name]
+      STACKS[name].select {|e| report_stack(e) }.size
     end
 
-    def stack
-      STACKS[name].map {|e| e[0] }.join(', ')
+    def report_stack(ary)
+      ary[0][One9.regexp_paths] ? ary[0] : nil
+    end
+
+    def stacks
+      STACKS[name].map {|e| report_stack(e) }.compact.
+        map {|e| e.sub(One9::CURRENT_DIRS_REGEX, '') }.uniq.join(', ')
     end
 
     def real_klass

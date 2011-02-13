@@ -6,10 +6,12 @@ require 'one9/rc'
 module One9
   extend self
   METHODS = []
-  COUNTS = Hash.new(0)
-  STACKS = Hash.new([])
+  CURRENT_DIRS = [Dir.pwd + '/', './']
+  CURRENT_DIRS_REGEX = Regexp.new "^#{Regexp.union(One9::CURRENT_DIRS)}"
+  STACKS = Hash.new {|h,k| h[k] = [] }
 
   def it
+    %w{fileutils date time}.each {|e| require e } # ensure all changes are loaded
     load_rc File.dirname(__FILE__) + '/one9/defaults.rb'
     load_rc('~/.one9rc') if File.exists?(File.expand_path('~/.one9rc'))
     Spy.setup METHODS
@@ -17,14 +19,24 @@ module One9
   end
 
   def spy(meth)
-    COUNTS[meth] += 1
-    STACKS[meth] << caller(2)
+    (STACKS[meth] ||= []) << caller[1..-1]
+  end
+
+  def report_paths
+    @report_paths ||= CURRENT_DIRS.map {|e| e + 'lib/' }
+  end
+
+  def regexp_paths
+    @regexp_paths ||= Regexp.new "^#{Regexp.union(report_paths)}"
   end
 
   def report
     Hirb.enable
-    puts Hirb::Helpers::AutoTable.render(METHODS.select {|e| e.count > 0 },
-     :fields => [:name, :count, :message, :type, :stack])
+    results = METHODS.select {|e| e.count > 0 }
+    puts "\n** One9 Report **"
+    return puts('No 1.9 changes found') if results.size.zero?
+    puts Hirb::Helpers::AutoTable.render(results,
+     :fields => [:name, :count, :message, :type, :stacks])
   end
 
   def load_rc(file)
