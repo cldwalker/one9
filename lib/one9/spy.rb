@@ -23,13 +23,13 @@ module One9
     end
 
     def self.eval_string(meth)
-      alias_code = "alias_method :_one9_#{meth.meth}, :#{meth.meth}"
+      alias_code = "alias_method :'_one9_#{meth.meth}', :'#{meth.meth}'"
       alias_code = "class <<self; #{alias_code}; end" if meth.class_method?
       %[#{alias_code}
 
         def #{meth.meth}(*args, &block)
           One9.spy('#{meth.name}')
-          _one9_#{meth.meth}(*args, &block)
+          send(:'_one9_#{meth.meth}', *args, &block)
         end
       ]
     end
