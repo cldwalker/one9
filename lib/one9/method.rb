@@ -2,7 +2,7 @@ module One9
   class Method
     attr_accessor :klass, :name, :meth, :type, :message
     def self.create(*args)
-      METHODS << new(*args)
+      One9.meths << new(*args)
     end
 
     def self.any_const_get(name)
@@ -29,7 +29,7 @@ module One9
     end
 
     def count
-      STACKS[name].select {|e| report_stack(e) }.size
+      One9.stacks[name].select {|e| report_stack(e) }.size
     end
 
     def report_stack(ary)
@@ -37,7 +37,7 @@ module One9
     end
 
     def stacks
-      STACKS[name].map {|e| report_stack(e) }.compact.
+      One9.stacks[name].map {|e| report_stack(e) }.compact.
         map {|e| e.sub(One9::CURRENT_DIRS_REGEX, '') }.uniq.join(', ')
     end
 
