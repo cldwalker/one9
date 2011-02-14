@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'hirb'
 require 'one9/method'
 require 'one9/spy'
@@ -11,11 +12,24 @@ module One9
   STACKS = Hash.new {|h,k| h[k] = [] }
 
   def it
-    %w{fileutils date time}.each {|e| require e } # ensure all changes are loaded
+    %w{date time}.each {|e| require e } # ensure all changes are loaded
     load_rc File.dirname(__FILE__) + '/one9/defaults.rb'
     load_rc('~/.one9rc') if File.exists?(File.expand_path('~/.one9rc'))
     Spy.setup METHODS
+    File.unlink(lock_file) if File.exists?(lock_file)
     at_exit { report }
+  end
+
+  def dir
+    @dir ||= begin
+      path = File.expand_path('~/.one9')
+      FileUtils.mkdir_p path
+      path
+    end
+  end
+
+  def lock_file
+    "#{dir}/report.lock"
   end
 
   def spy(meth)
@@ -31,6 +45,8 @@ module One9
   end
 
   def report
+    return if File.exists? lock_file
+    FileUtils.touch lock_file
     Hirb.enable
     results = METHODS.select {|e| e.count > 0 }
     puts "\n** One9 Report **"
