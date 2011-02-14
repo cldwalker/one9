@@ -11,8 +11,8 @@ module One9
   attr_accessor :stacks
   self.stacks = Hash.new {|h,k| h[k] = [] }
 
-  def run
-    Report.read_and_print
+  def spy(meth)
+    stacks[meth] << caller[1..-1]
   end
 
   def it
@@ -34,9 +34,5 @@ module One9
       FileUtils.mkdir_p path
       path
     end
-  end
-
-  def spy(meth)
-    stacks[meth] << caller[1..-1]
   end
 end

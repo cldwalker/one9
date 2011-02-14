@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 
-require 'one9'
-One9.run
+require 'one9/runner'
+One9::Runner.run

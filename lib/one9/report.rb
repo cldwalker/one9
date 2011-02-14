@@ -10,7 +10,8 @@ module One9
       puts "\n** One9 Report **"
       return puts('No 1.9 changes found') if results.size.zero?
       puts Hirb::Helpers::AutoTable.render(results,
-       :fields => [:name, :count, :message, :type, :stacks])
+       :fields => [:name, :count, :message, :type, :stacks],
+      :filters => { :stacks => [:join, ','] })
     end
 
     def later(meths, stacks)
@@ -18,11 +19,24 @@ module One9
       at_exit { print_and_save(meths, stacks) }
     end
 
-    def read_and_print
+    def setup
       return warn("one9 hasn't profiled anything. Run it with your test suite first.") unless
         File.exists? marshal_file
       One9.setup
-      meths, stacks = File.open(marshal_file, 'rb'){|f| Marshal.load(f.read ) }
+      File.open(marshal_file, 'rb'){|f| Marshal.load(f.read ) }
+    end
+
+    def print_files(meth)
+      meths, stacks = setup
+      if meths && stacks
+        return puts("Method not found") unless obj = meths.find {|e| e.name == meth }
+        results = ReportMethod.create([obj], stacks)
+        puts results[0].stacks
+      end
+    end
+
+    def print_last_profile
+      meths, stacks = setup
       print(meths, stacks)
     end
 

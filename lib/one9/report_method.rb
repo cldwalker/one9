@@ -20,11 +20,11 @@ module One9
 
     def stacks
       self.class.stacks[name].map {|e| report_stack(e) }.compact.
-        map {|e| e.sub(CURRENT_DIRS_REGEX, '') }.uniq.join(', ')
+        map {|e| e.sub(CURRENT_DIRS_REGEX, '') }.uniq
     end
 
     def count
-      self.class.stacks[name].select {|e| report_stack(e) }.size
+      self.class.stacks[name].select {|e| report_stack(e) }.compact.uniq.size
     end
 
     def report_stack(ary)
