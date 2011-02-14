@@ -1,10 +1,6 @@
 module One9
   class Method
     attr_accessor :klass, :name, :meth, :type, :message
-    def self.create(*args)
-      One9.meths << new(*args)
-    end
-
     def self.any_const_get(name)
       return name if name.is_a?(Module)
       begin
@@ -26,19 +22,6 @@ module One9
       @message, @type = options.values_at(:message, :type)
       @message ||= @type == :delete ? "This method does not exist in 1.9" :
         "This method has different behavior in 1.9"
-    end
-
-    def count
-      One9.stacks[name].select {|e| report_stack(e) }.size
-    end
-
-    def report_stack(ary)
-      ary[0][One9.regexp_paths] ? ary[0] : nil
-    end
-
-    def stacks
-      One9.stacks[name].map {|e| report_stack(e) }.compact.
-        map {|e| e.sub(One9::CURRENT_DIRS_REGEX, '') }.uniq.join(', ')
     end
 
     def real_klass
