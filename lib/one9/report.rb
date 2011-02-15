@@ -1,4 +1,5 @@
 module One9
+  class NoProfileError < StandardError; end
   module Report
     extend self
 
@@ -9,9 +10,12 @@ module One9
       results = results.select {|e| e.count > 0 }
       puts "\n** One9 Report **"
       return puts('No 1.9 changes found') if results.size.zero?
-      puts Hirb::Helpers::AutoTable.render(results,
-       :fields => [:name, :count, :message, :type, :stacks],
-      :filters => { :stacks => [:join, ','] })
+      table results, :fields => [:name, :count, :message, :type, :stacks],
+        :filters => { :stacks => [:join, ','] }
+    end
+
+    def table(*args)
+      puts Hirb::Helpers::AutoTable.render(*args)
     end
 
     def later(meths, stacks)
@@ -19,23 +23,37 @@ module One9
       at_exit { print_and_save(meths, stacks) }
     end
 
+    def profile_exists!
+      raise(NoProfileError) unless File.exists? marshal_file
+    end
+
     def setup
-      return warn("one9 hasn't profiled anything. Run it with your test suite first.") unless
-        File.exists? marshal_file
+      profile_exists!
       One9.setup
       File.open(marshal_file, 'rb'){|f| Marshal.load(f.read ) }
     end
 
+    def quickfix(query=nil)
+      meths, stacks = setup
+      results = method_files(meths, stacks, query)
+      results.map! {|meth, trace|
+        trace[/^([^:]+:\d+:)(.*)/] ? "#{$1} #{meth} #{$2}" : trace
+      }
+      puts results
+    end
+
+    def method_files(meths, stacks, query)
+      objs = query ? meths.select {|e| e.name[/#{query}/] } : meths
+      results = ReportMethod.create(objs, stacks)
+      results.inject([]) {|arr, e|
+        arr += e.stacks.map {|f| [e.name, f] }
+      }
+    end
+
     def print_files(query=nil)
       meths, stacks = setup
-      if meths && stacks
-        objs = query ? meths.select {|e| e.name[/#{query}/] } : meths
-        results = ReportMethod.create(objs, stacks)
-        results = results.inject([]) {|arr, e|
-          arr += e.stacks.map {|f| [e.name, f] }
-        }
-        puts Hirb::Helpers::AutoTable.render(results, :change_fields => [:name, :file])
-      end
+      results = method_files(meths, stacks, query)
+      table results, :change_fields => [:name, :file]
     end
 
     def print_last_profile

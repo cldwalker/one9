@@ -12,10 +12,22 @@ module One9
       else
         warn "one9: Invalid command '#{argv[0]}'"
       end
+    rescue NoProfileError
+      warn("one9 hasn't profiled anything. Run it with your test suite first.")
     end
 
-    def files(meth=nil)
-      Report.print_files(meth)
+    def files(query=nil)
+      Report.print_files(query)
+    end
+
+    def quickfix(query=nil)
+      Report.quickfix(query)
+    end
+
+    def edit(query=nil)
+      Report.profile_exists!
+      grep = "one9 quickfix #{query}".strip.gsub(' ', '\\ ')
+      exec(%q[vim -c 'set grepprg=] + grep + %q[' -c 'botright copen' -c 'silent! grep'])
     end
   end
 end
