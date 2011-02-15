@@ -26,12 +26,15 @@ module One9
       File.open(marshal_file, 'rb'){|f| Marshal.load(f.read ) }
     end
 
-    def print_files(meth)
+    def print_files(query=nil)
       meths, stacks = setup
       if meths && stacks
-        return puts("Method not found") unless obj = meths.find {|e| e.name == meth }
-        results = ReportMethod.create([obj], stacks)
-        puts results[0].stacks
+        objs = query ? meths.select {|e| e.name[/#{query}/] } : meths
+        results = ReportMethod.create(objs, stacks)
+        results = results.inject([]) {|arr, e|
+          arr += e.stacks.map {|f| [e.name, f] }
+        }
+        puts Hirb::Helpers::AutoTable.render(results, :change_fields => [:name, :file])
       end
     end
 

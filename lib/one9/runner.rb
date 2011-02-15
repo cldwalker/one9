@@ -14,7 +14,7 @@ module One9
       end
     end
 
-    def files(meth)
+    def files(meth=nil)
       Report.print_files(meth)
     end
   end
