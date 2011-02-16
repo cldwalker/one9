@@ -24,6 +24,11 @@ module One9
       Report.quickfix(query)
     end
 
+    def test(*args)
+      ENV['RUBYOPT'] = '-rone9/it'
+      exec args.empty? ? 'rake test' : args.join(' ')
+    end
+
     def edit(query=nil)
       Report.profile_exists!
       grep = "one9 quickfix #{query}".strip.gsub(' ', '\\ ')
