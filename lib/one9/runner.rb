@@ -14,6 +14,8 @@ module One9
       end
     rescue NoProfileError
       warn("one9 hasn't profiled anything. Run it with your test suite first.")
+    rescue
+      warn("one9 error: #{$!}\n  #{$!.backtrace[0]}")
     end
 
     def files(query=nil)
