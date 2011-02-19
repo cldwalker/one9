@@ -4,7 +4,8 @@ module One9
   module Runner
     extend self
 
-    def run(argv = ARGV)
+    def run(argv=ARGV)
+      One9.config.merge! parse_options(argv)
       if argv.empty?
         Report.print_last_profile
       elsif public_methods.include? argv[0]
@@ -16,6 +17,12 @@ module One9
       warn("one9 hasn't profiled anything. Run it with your test suite first.")
     rescue
       warn("one9 error: #{$!}\n  #{$!.backtrace[0]}")
+    end
+
+    def parse_options(argv)
+      opt = {}
+      opt[:debug] = true if argv.delete('-d') || argv.delete('--debug')
+      opt
     end
 
     def files(query=nil)

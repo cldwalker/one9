@@ -8,8 +8,9 @@ require 'one9/rc'
 
 module One9
   extend self
-  attr_accessor :stacks
+  attr_accessor :stacks, :config
   self.stacks = Hash.new {|h,k| h[k] = [] }
+  self.config = {}
 
   def spy(meth)
     stacks[meth] << caller[1..-1]
