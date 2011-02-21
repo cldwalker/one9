@@ -11,6 +11,7 @@ module One9
       puts "\n** One9 Report **"
       return puts('No 1.9 changes found') if results.size.zero?
       table results, :fields => [:name, :count, :message, :type, :stacks],
+        :headers => {:name => 'method', :stacks => 'lines'},
         :filters => { :stacks => [:join, ','] }
     end
 
@@ -53,7 +54,7 @@ module One9
     def print_files(query=nil)
       meths, stacks = setup
       results = method_files(meths, stacks, query)
-      table results, :change_fields => [:name, :file]
+      table results, :change_fields => [:name, :line]
     end
 
     def print_last_profile
