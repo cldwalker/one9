@@ -1,0 +1,105 @@
+== Description
+one9 is a commandline tool to help convert your ruby 1.8.7 code to 1.9.2.  It works by spying on
+your tests and detecting 1.9 changes. Once your test suite finishes, one9 prints a report listing
+the exact locations of methods that have changed in 1.9. To make the transition even easier, one9
+can open this list in an editor. So what's your excuse for not upgrading to 1.9.2? ;)
+
+== Install
+
+    $ gem install one9
+
+== Usage
+
+Run your tests using ruby 1.8 in the root directory of a gem or Rails app:
+
+    # Runs `rake test` by default
+    $ one9 test
+
+    # To run any test command, just prefix it with one9 test:
+    # Run all cucumber specs
+    $ one9 test cucumber
+
+    # Only run model specs
+    $ one9 test rspec spec/models
+
+After your tests, you'll see a report. Here's what it looks like when run on {boson}[http://github.com/cldwalker/boson]:
+
+    $ one9 test
+    ............................................................................................................................................................................................................................................................................................................
+    Finished in 0.704555 seconds.
+
+    300 tests, 580 assertions, 0 failures, 0 errors
+
+    ** One9 Report **
+    +---------------------------------+-------+--------------------------------------------------------------+--------+--------------------------------------------------------------+
+    | method                          | count | message                                                      | type   | lines                                                        |
+    +---------------------------------+-------+--------------------------------------------------------------+--------+--------------------------------------------------------------+
+    | Module#instance_methods         | 5     | Returns array of symbols instead of array of strings         | change | lib/boson/util.rb:39:in `detect',lib/boson/util.rb:40:in ... |
+    | Module#private_instance_methods | 2     | Returns array of symbols instead of array of strings         | change | lib/boson/inspectors/argument_inspector.rb:23:in `scrape_... |
+    | Hash#to_s                       | 4     | An alias of #inspect instead of a spaceless join of the e... | change | lib/boson/loader.rb:87:in `initialize_library_module',lib... |
+    | Hash#select                     | 4     | Returns a hash instead of an association array               | change | lib/boson/loader.rb:109:in `set_library_commands',lib/bos... |
+    +---------------------------------+-------+--------------------------------------------------------------+--------+--------------------------------------------------------------+
+    4 rows in set
+
+To edit these possible changes:
+
+    # Opens all changes
+    $ one9 edit
+
+    # Only open a subset of changes:
+    # Opens Hash changes
+    $ one9 edit Hash
+
+    # Only open Hash#to_s changes
+    $ one9 edit Hash#to_s
+
+Currently this opens the quickfix list in vim. Patches for emacs and other editors welcome :)
+
+If your editor isn't supported, you can still view the possible changes:
+
+    $ one9 files
+    +---------------------------------+---------------------------------------------------------------------+
+    | name                            | line                                                                |
+    +---------------------------------+---------------------------------------------------------------------+
+    | Module#instance_methods         | lib/boson/util.rb:39:in `detect'                                    |
+    | Module#instance_methods         | lib/boson/util.rb:40:in `detect'                                    |
+    | Module#instance_methods         | lib/boson/loader.rb:101:in `check_for_method_conflicts'             |
+    | Module#instance_methods         | lib/boson/util.rb:44:in `detect'                                    |
+    | Module#instance_methods         | lib/boson/namespace.rb:28:in `boson_commands'                       |
+    ...
+
+== Configure
+
+one9 comes with a decent list of 1.9 changes and descriptions. However, if you'd like to add your
+own changes, you can add them to your ~/.one9rc. For example:
+
+    # For methods that have changed in 1.9
+    change 'Class#instance_method', 'Some description'
+
+    # For methods that have been deleted in 1.9
+    delete 'Class.class_method', 'Some description'
+
+For more examples, {see the defaults that one9
+defines}[https://github.com/cldwalker/one9/blob/master/lib/one9/defaults.rb].
+
+If I've missed an important 1.9 change, feel free to fork and pull.
+
+== Goal
+This gem aims to get the ruby community to seriously use 1.9.2 and to port as many of the 1.8 gems to
+1.9. Since this gem maintains a list of 1.9 changes, it could be used as a multi-purpose
+tool. Some ideas for future commands:
+
+* grep command to grep code for changed methods. Basically for porting test-deprived code.
+* info command to explain a method's change in detail with examples and possible solutions
+* rails command to port a rails app and all its gem dependencies.
+
+If you're interested in implementing these or other such commands, please do contribute.
+
+== Limitations
+The following methods can't be spied on: Object#=~, String#[], String#to_a, String#each. For more,
+see the {defaults file}[[https://github.com/cldwalker/one9/blob/master/lib/one9/defaults.rb].
+
+== 1.9 Links
+* http://eigenclass.org/hiki/Changes+in+Ruby+1.9
+* http://svn.ruby-lang.org/repos/ruby/tags/v1_9_1_0/NEWS
+* http://blog.grayproductions.net/articles/understanding_m17n
