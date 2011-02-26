@@ -5,6 +5,7 @@ require 'one9/method'
 require 'one9/report_method'
 require 'one9/spy'
 require 'one9/rc'
+require 'one9/version'
 
 module One9
   extend self

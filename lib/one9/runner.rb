@@ -4,15 +4,16 @@ module One9
   module Runner
     extend self
     OPTIONS = [
-      ['-h, --help', 'Prints help'],
-      ['-d, --debug', 'Prints all methods when reporting']
+      ['-d, --debug', 'Print all methods when reporting'],
+      ['-v, --version', 'Print version'],
+      ['-h, --help', 'Print help']
     ]
     COMMANDS = [
-      ['test', 'Spies on test and prints report. Default test command is `rake test`'],
-      ['list', 'Prints 1.9 changes report from last test'],
-      ['edit', 'Places 1.9 changes from last test into an editor'],
-      ['files', 'Prints 1.9 changes per occurrence in a file'],
-      ['quickfix', 'Generates 1.9 change list formatted for editors']
+      ['test', 'Spy on tests and print report. Default test command is `rake test`'],
+      ['list', 'Print 1.9 changes report from last test'],
+      ['edit', 'Place 1.9 changes from last test into an editor'],
+      ['files', 'Print 1.9 changes per occurrence in a file'],
+      ['quickfix', 'Generate 1.9 change list formatted for editors']
     ]
 
     def run(argv=ARGV)
@@ -56,13 +57,20 @@ module One9
     private
     def parse_options(argv)
       opt = {}
-      opt[:debug] = true if argv.delete('-d') || argv.delete('--debug')
-      opt[:help] = true if argv.delete('-h') || argv.delete('--help')
+      while argv[0] =~ /^-/
+        case option = argv.shift
+        when '-d', '--debug' then opt[:debug] = true
+        when '-h', '--help'  then opt[:help] = true
+        when '-v', '--version' then puts(One9::VERSION); exit
+        else
+          warn "one9: invalid option `#{option}'"
+        end
+      end
       opt
     end
 
     def help
-      puts "one9 COMMAND [ARGS]", "", "Options:", format_arr(OPTIONS),
+      puts "one9 [OPTIONS] COMMAND [ARGS]", "", "Options:", format_arr(OPTIONS),
         "", "Commands:", format_arr(COMMANDS)
     end
 
