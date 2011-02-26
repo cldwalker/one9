@@ -9,13 +9,19 @@ module One9
       ['-h, --help', 'Print help']
     ]
     COMMANDS = [
-      ['test', 'Spy on tests and print report. Default test command is `rake test`'],
+      ['test', 'Spy on tests and print report.'],
       ['list', 'Print 1.9 changes report from last test'],
       ['edit', 'Place 1.9 changes from last test into an editor'],
       ['changes', 'Print all known 1.9 changes'],
       ['lines', 'Print 1.9 changes by line from last test'],
       ['quickfix', 'Generate 1.9 change list formatted for editors']
     ]
+    COMMANDS_HELP = {
+      :test => "[COMMAND='rake test']",
+      :list => '[QUERY]',
+      :changes => '[QUERY]',
+      :lines => '[QUERY]'
+    }
 
     def run(argv=ARGV)
       One9.config.merge! parse_options(argv)
@@ -33,21 +39,34 @@ module One9
     end
 
     [:list, :lines, :changes, :quickfix].each do |meth|
-      define_method(meth) {|*args| Report.send(meth, *args) }
+      define_method(meth) {|*args|
+        command_help(meth, *args)
+        Report.send(meth, *args)
+      }
     end
 
     def test(*args)
+      command_help(:test, *args)
       ENV['RUBYOPT'] = '-rone9/it'
       exec args.empty? ? 'rake test' : args.join(' ')
     end
 
     def edit(query=nil)
+      command_help(:edit, query)
       Report.profile_exists!
       grep = "one9 quickfix #{query}".strip.gsub(' ', '\\ ')
       exec(%q[vim -c 'set grepprg=] + grep + %q[' -c 'botright copen' -c 'silent! grep'])
     end
 
     private
+    def command_help(cmd, *args)
+      if %w{-h --help}.include? args[0]
+        msg = "one9 #{cmd}"
+        msg += " " + COMMANDS_HELP[cmd] if COMMANDS_HELP[cmd]
+        abort msg
+      end
+    end
+
     def parse_options(argv)
       opt = {}
       while argv[0] =~ /^-/
@@ -63,8 +82,10 @@ module One9
     end
 
     def help
-      puts "one9 [OPTIONS] COMMAND [ARGS]", "", "Options:", format_arr(OPTIONS),
-        "", "Commands:", format_arr(COMMANDS)
+      puts "one9 [OPTIONS] COMMAND [ARGS]", "",
+        "Commands:", format_arr(COMMANDS), "",
+        "For more information on a command use:", "  one9 COMMAND -h", "",
+        "Options:", format_arr(OPTIONS)
     end
 
     def format_arr(arr)
