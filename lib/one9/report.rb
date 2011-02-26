@@ -14,6 +14,13 @@ module One9
       table results.map {|m,l| [m.name, l] } , :change_fields => [:method, :line]
     end
 
+    def print_changes(query=nil)
+      meths = One9.load_methods
+      meths = query_methods(meths, query)
+      table meths, :fields => [:name, :message, :type],
+        :headers => {:name => 'method', :stacks => 'lines'}
+    end
+
     def quickfix(query=nil)
       meths, stacks = setup
       results = method_lines(meths, stacks, query)
@@ -55,8 +62,12 @@ module One9
       File.open(marshal_file, 'rb'){|f| Marshal.load(f.read ) }
     end
 
+    def query_methods(meths, query)
+      query ? meths.select {|e| e.name[/#{query}/] } : meths
+    end
+
     def method_lines(meths, stacks, query)
-      objs = query ? meths.select {|e| e.name[/#{query}/] } : meths
+      objs = query_methods(meths, query)
       results = ReportMethod.create(objs, stacks)
       results.inject([]) {|arr, e|
         arr += e.stacks.map {|f| [e, f] }

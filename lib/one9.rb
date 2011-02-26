@@ -18,11 +18,16 @@ module One9
   end
 
   def it
+    meths = load_methods
+    Spy.setup meths
+    Report.later(meths, stacks)
+  end
+
+  def load_methods
     setup
     Rc.load File.dirname(__FILE__) + '/one9/defaults.rb'
     Rc.load('~/.one9rc') if File.exists?(File.expand_path('~/.one9rc'))
-    Spy.setup Rc.meths
-    Report.later(Rc.meths, stacks)
+    Rc.meths
   end
 
   # ensure all changes can be loaded

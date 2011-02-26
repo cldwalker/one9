@@ -12,6 +12,7 @@ module One9
       ['test', 'Spy on tests and print report. Default test command is `rake test`'],
       ['list', 'Print 1.9 changes report from last test'],
       ['edit', 'Place 1.9 changes from last test into an editor'],
+      ['changes', 'Print all known 1.9 changes'],
       ['lines', 'Print 1.9 changes by line from last test'],
       ['quickfix', 'Generate 1.9 change list formatted for editors']
     ]
@@ -37,6 +38,10 @@ module One9
 
     def lines(query=nil)
       Report.print_files(query)
+    end
+
+    def changes(query=nil)
+      Report.print_changes(query)
     end
 
     def quickfix(query=nil)
