@@ -3,18 +3,18 @@ module One9
   module Report
     extend self
 
-    def print_last_profile
+    def list
       meths, stacks = setup
       print(meths, stacks)
     end
 
-    def print_files(query=nil)
+    def lines(query=nil)
       meths, stacks = setup
       results = method_lines(meths, stacks, query)
       table results.map {|m,l| [m.name, l] } , :change_fields => [:method, :line]
     end
 
-    def print_changes(query=nil)
+    def changes(query=nil)
       meths = One9.load_methods
       meths = query_methods(meths, query)
       table meths, :fields => [:name, :message, :type],

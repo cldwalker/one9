@@ -27,25 +27,13 @@ module One9
         warn "one9: Invalid command '#{argv[0]}'"
       end
     rescue NoProfileError
-      warn("one9 hasn't profiled anything. Run it with your test suite first.")
+      warn("one9 hasn't profiled anything. `one9 test` your test suite first.")
     rescue
       warn("one9 error: #{$!}\n  #{$!.backtrace[0]}")
     end
 
-    def list
-      Report.print_last_profile
-    end
-
-    def lines(query=nil)
-      Report.print_files(query)
-    end
-
-    def changes(query=nil)
-      Report.print_changes(query)
-    end
-
-    def quickfix(query=nil)
-      Report.quickfix(query)
+    [:list, :lines, :changes, :quickfix].each do |meth|
+      define_method(meth) {|*args| Report.send(meth, *args) }
     end
 
     def test(*args)
