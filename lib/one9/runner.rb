@@ -12,7 +12,7 @@ module One9
       ['test', 'Spy on tests and print report. Default test command is `rake test`'],
       ['list', 'Print 1.9 changes report from last test'],
       ['edit', 'Place 1.9 changes from last test into an editor'],
-      ['files', 'Print 1.9 changes per occurrence in a file'],
+      ['lines', 'Print 1.9 changes by line from last test'],
       ['quickfix', 'Generate 1.9 change list formatted for editors']
     ]
 
@@ -35,7 +35,7 @@ module One9
       Report.print_last_profile
     end
 
-    def files(query=nil)
+    def lines(query=nil)
       Report.print_files(query)
     end
 

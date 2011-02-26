@@ -36,25 +36,25 @@ module One9
 
     def quickfix(query=nil)
       meths, stacks = setup
-      results = method_files(meths, stacks, query)
+      results = method_lines(meths, stacks, query)
       results.map! {|meth, trace|
-        trace[/^([^:]+:\d+:)(.*)/] ? "#{$1} #{meth} #{$2}" : trace
+        trace[/^([^:]+:\d+:)(.*)/] ? "#{$1} #{meth.name} - #{meth.message}" : trace
       }
       puts results
     end
 
-    def method_files(meths, stacks, query)
+    def method_lines(meths, stacks, query)
       objs = query ? meths.select {|e| e.name[/#{query}/] } : meths
       results = ReportMethod.create(objs, stacks)
       results.inject([]) {|arr, e|
-        arr += e.stacks.map {|f| [e.name, f] }
+        arr += e.stacks.map {|f| [e, f] }
       }
     end
 
     def print_files(query=nil)
       meths, stacks = setup
-      results = method_files(meths, stacks, query)
-      table results, :change_fields => [:name, :line]
+      results = method_lines(meths, stacks, query)
+      table results.map {|m,l| [m.name, l] } , :change_fields => [:method, :line]
     end
 
     def print_last_profile
