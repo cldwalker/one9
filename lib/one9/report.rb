@@ -3,6 +3,26 @@ module One9
   module Report
     extend self
 
+    def print_last_profile
+      meths, stacks = setup
+      print(meths, stacks)
+    end
+
+    def print_files(query=nil)
+      meths, stacks = setup
+      results = method_lines(meths, stacks, query)
+      table results.map {|m,l| [m.name, l] } , :change_fields => [:method, :line]
+    end
+
+    def quickfix(query=nil)
+      meths, stacks = setup
+      results = method_lines(meths, stacks, query)
+      results.map! {|meth, trace|
+        trace[/^([^:]+:\d+:)(.*)/] ? "#{$1} #{meth.name} - #{meth.message}" : trace
+      }
+      puts results
+    end
+
     def print(meths, stacks)
       FileUtils.touch lock_file
       Hirb.enable
@@ -15,8 +35,8 @@ module One9
         :filters => { :stacks => [:join, ','] }
     end
 
-    def table(*args)
-      puts Hirb::Helpers::AutoTable.render(*args)
+    def profile_exists!
+      raise(NoProfileError) unless File.exists? marshal_file
     end
 
     def later(meths, stacks)
@@ -24,8 +44,9 @@ module One9
       at_exit { print_and_save(meths, stacks) }
     end
 
-    def profile_exists!
-      raise(NoProfileError) unless File.exists? marshal_file
+    private
+    def table(*args)
+      puts Hirb::Helpers::AutoTable.render(*args)
     end
 
     def setup
@@ -34,32 +55,12 @@ module One9
       File.open(marshal_file, 'rb'){|f| Marshal.load(f.read ) }
     end
 
-    def quickfix(query=nil)
-      meths, stacks = setup
-      results = method_lines(meths, stacks, query)
-      results.map! {|meth, trace|
-        trace[/^([^:]+:\d+:)(.*)/] ? "#{$1} #{meth.name} - #{meth.message}" : trace
-      }
-      puts results
-    end
-
     def method_lines(meths, stacks, query)
       objs = query ? meths.select {|e| e.name[/#{query}/] } : meths
       results = ReportMethod.create(objs, stacks)
       results.inject([]) {|arr, e|
         arr += e.stacks.map {|f| [e, f] }
       }
-    end
-
-    def print_files(query=nil)
-      meths, stacks = setup
-      results = method_lines(meths, stacks, query)
-      table results.map {|m,l| [m.name, l] } , :change_fields => [:method, :line]
-    end
-
-    def print_last_profile
-      meths, stacks = setup
-      print(meths, stacks)
     end
 
     def marshal_file
