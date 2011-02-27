@@ -3,8 +3,9 @@ module One9
   module Report
     extend self
 
-    def list
+    def list(query=nil)
       meths, stacks = setup
+      meths = query_methods(meths, query)
       print(meths, stacks)
     end
 

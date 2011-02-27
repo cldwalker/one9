@@ -8,10 +8,10 @@ Feature: Commands
       | command  | usage                      |
       | test     | test [COMMAND='rake test'] |
       | list     | list [QUERY]               |
-      | edit     | edit                       |
+      | edit     | edit [QUERY]               |
       | changes  | changes [QUERY]            |
       | lines    | lines [QUERY]              |
-      | quickfix | quickfix                   |
+      | quickfix | quickfix [QUERY]           |
 
   Scenario Outline: Commands print error for no report
     Given I have no report
@@ -34,8 +34,21 @@ Feature: Commands
     Examples:
       | command  |
       | list     |
-      | quickfix     |
+      | quickfix |
       | lines    |
+
+  Scenario Outline: Commands with queries return correct results
+    Given I have a report
+    When I run "one9 <command> Hash"
+    Then the output should contain "Hash"
+    And the output should not contain "Module"
+
+    Examples:
+      | command  |
+      | list     |
+      | quickfix |
+      | lines    |
+      | changes  |
 
   Scenario: edit command with unsupported editor
     Given I have a report

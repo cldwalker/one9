@@ -20,7 +20,9 @@ module One9
       :test => "[COMMAND='rake test']",
       :list => '[QUERY]',
       :changes => '[QUERY]',
-      :lines => '[QUERY]'
+      :lines => '[QUERY]',
+      :edit => '[QUERY]',
+      :quickfix => '[QUERY]'
     }
 
     def run(argv=ARGV)
