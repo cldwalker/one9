@@ -32,8 +32,8 @@ module One9
       else
         abort "one9: Invalid command `#{argv[0]}'"
       end
-    rescue NoProfileError
-      warn("one9 hasn't profiled anything. `one9 test` your project first.")
+    rescue NoReportError
+      abort("one9 has no report. `one9 test` your project first.")
     rescue
       warn("one9 error: #{$!}\n  #{$!.backtrace[0]}")
     end
@@ -53,7 +53,7 @@ module One9
 
     def edit(query=nil)
       command_help(:edit, query)
-      Report.profile_exists!
+      Report.report_exists!
       grep = "one9 quickfix #{query}".strip.gsub(' ', '\\ ')
       exec(%q[vim -c 'set grepprg=] + grep + %q[' -c 'botright copen' -c 'silent! grep'])
     end

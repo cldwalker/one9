@@ -1,5 +1,5 @@
 module One9
-  class NoProfileError < StandardError; end
+  class NoReportError < StandardError; end
   module Report
     extend self
 
@@ -42,13 +42,21 @@ module One9
         :filters => { :stacks => [:join, ','] }
     end
 
-    def profile_exists!
-      raise(NoProfileError) unless File.exists? marshal_file
+    def report_exists!
+      raise(NoReportError) unless File.exists? marshal_file
     end
 
     def later(meths, stacks)
       File.unlink(lock_file) if File.exists?(lock_file)
       at_exit { print_and_save(meths, stacks) }
+    end
+
+    def marshal_file
+      "#{One9.dir}/one9.marshal"
+    end
+
+    def lock_file
+      "#{One9.dir}/report.lock"
     end
 
     private
@@ -57,7 +65,7 @@ module One9
     end
 
     def setup
-      profile_exists!
+      report_exists!
       One9.setup
       File.open(marshal_file, 'rb'){|f| Marshal.load(f.read ) }
     end
@@ -72,14 +80,6 @@ module One9
       results.inject([]) {|arr, e|
         arr += e.stacks.map {|f| [e, f] }
       }
-    end
-
-    def marshal_file
-      "#{One9.dir}/one9.marshal"
-    end
-
-    def lock_file
-      "#{One9.dir}/report.lock"
     end
 
     def print_and_save(meths, stacks)

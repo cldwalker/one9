@@ -9,7 +9,7 @@ require 'one9/version'
 
 module One9
   extend self
-  attr_accessor :stacks, :config
+  attr_accessor :stacks, :config, :dir
   self.stacks = Hash.new {|h,k| h[k] = [] }
   self.config = {}
 
@@ -43,3 +43,5 @@ module One9
     end
   end
 end
+
+One9.dir = ENV['ONE9_DIR']
