@@ -54,8 +54,13 @@ module One9
     def edit(query=nil)
       command_help(:edit, query)
       Report.report_exists!
-      grep = "one9 quickfix #{query}".strip.gsub(' ', '\\ ')
-      exec(%q[vim -c 'set grepprg=] + grep + %q[' -c 'botright copen' -c 'silent! grep'])
+      editor = ENV['EDITOR'] || 'vim'
+      if editor[/^vim/]
+        grep = "one9 quickfix #{query}".strip.gsub(' ', '\\ ')
+        exec(%q[vim -c 'set grepprg=] + grep + %q[' -c 'botright copen' -c 'silent! grep'])
+      else
+        puts "No support for #{editor} yet. Patches welcome :)"
+      end
     end
 
     private
