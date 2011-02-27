@@ -26,8 +26,28 @@ Feature: Commands
       | lines    |
       | quickfix |
 
-  Scenario: Edit command with unsupported editor
+  Scenario: edit command with unsupported editor
     Given I have a report
     And I have the editor "nano"
     When I run "one9 edit"
     Then the output should contain "No support for nano yet. Patches welcome :)"
+
+  Scenario: edit command with supported editor
+    Given I have a report
+    And I have the editor "vim"
+    When I run "one9 edit" which hangs
+    Then the output should contain ""
+
+  Scenario: test command with arguments
+    Given I have a report
+    When I run "one9 test ruby -e 'puts'"
+    Then the output should contain "** One9 Report **"
+    And the output should not contain multiple reports
+
+  Scenario: test command with no arguments
+    Given I have a report
+    And a file named "Rakefile" with:
+      | task(:test) { sh %[ruby -e 'puts "OK"'] } |
+    When I run "one9 test"
+    Then the output should contain "** One9 Report **"
+    And the output should not contain multiple reports

@@ -13,3 +13,16 @@ end
 Given /^I have the editor "([^"]*)"$/ do |editor|
   ENV['EDITOR'] = editor
 end
+
+Given /^I run "([^"]*)" which hangs$/ do |cmd|
+  @aruba_timeout_seconds = 0.1
+  begin
+    Then %{I run "#{cmd}"}
+  rescue ChildProcess::TimeoutError
+  end
+  @aruba_timeout_seconds = nil
+end
+
+Then /^the output should not contain multiple reports$/ do
+  all_output.should_not =~ /One9 Report.*One9 Report/m
+end
