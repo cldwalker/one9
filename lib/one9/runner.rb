@@ -30,10 +30,10 @@ module One9
       elsif public_methods.include? argv[0]
         send(*argv)
       else
-        warn "one9: Invalid command '#{argv[0]}'"
+        abort "one9: Invalid command `#{argv[0]}'"
       end
     rescue NoProfileError
-      warn("one9 hasn't profiled anything. `one9 test` your test suite first.")
+      warn("one9 hasn't profiled anything. `one9 test` your project first.")
     rescue
       warn("one9 error: #{$!}\n  #{$!.backtrace[0]}")
     end
