@@ -1,13 +1,18 @@
-Then /^the output contains the current version$/ do
-  Then %{the output should match /^#{One9::VERSION}/}
-end
-
 Given /^I have no report$/ do
   FileUtils.rm_f One9::Report.marshal_file
 end
 
 Given /^I have a report$/ do
-  FileUtils.touch One9::Report.marshal_file
+  FileUtils.cp Dir.pwd + '/features/support/one9.marshal',
+    One9::Report.marshal_file
+end
+
+Given /^I have an invalid report$/ do
+  File.open(One9::Report.marshal_file, 'w') {|f| f.write '' }
+end
+
+Given /^I have a report with no data$/ do
+  File.open(One9::Report.marshal_file, 'wb') {|f| f.write Marshal.dump([[], {}]) }
 end
 
 Given /^I have the editor "([^"]*)"$/ do |editor|
@@ -25,4 +30,15 @@ end
 
 Then /^the output should not contain multiple reports$/ do
   all_output.should_not =~ /One9 Report.*One9 Report/m
+end
+
+Then /^the output contains all defined methods$/ do
+  meths = One9.load_methods.delete_if {|e| e.name[/pretty_print/] }
+  meths.map(&:name).each do|meth|
+    Then %{the output should contain "#{meth}"}
+  end
+end
+
+Then /^the output contains the current version$/ do
+  Then %{the output should match /^#{One9::VERSION}/}
 end

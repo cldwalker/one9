@@ -27,3 +27,8 @@ Feature: options, help and misc edge cases
     When I run "one9 blah"
     Then the output should match /^one9: Invalid command `blah'/
     And the exit status should be 1
+
+  Scenario: Print error for unexpected error
+    When I run "one9 test zzz"
+    Then the stderr should contain "one9 error:"
+    And the stderr should contain "zzz"

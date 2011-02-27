@@ -26,6 +26,17 @@ Feature: Commands
       | lines    |
       | quickfix |
 
+  Scenario Outline: Commands with -d option print all changes
+    Given I have a report
+    When I run "one9 -d <command>"
+    Then the output should contain "Module#public_m"
+
+    Examples:
+      | command  |
+      | list     |
+      | quickfix     |
+      | lines    |
+
   Scenario: edit command with unsupported editor
     Given I have a report
     And I have the editor "nano"
@@ -39,15 +50,34 @@ Feature: Commands
     Then the output should contain ""
 
   Scenario: test command with arguments
-    Given I have a report
     When I run "one9 test ruby -e 'puts'"
     Then the output should contain "** One9 Report **"
     And the output should not contain multiple reports
 
   Scenario: test command with no arguments
-    Given I have a report
-    And a file named "Rakefile" with:
+    Given a file named "Rakefile" with:
       | task(:test) { sh %[ruby -e 'puts "OK"'] } |
     When I run "one9 test"
     Then the output should contain "** One9 Report **"
     And the output should not contain multiple reports
+
+  Scenario: changes command
+    When I run "one9 changes"
+    Then the output contains all defined methods
+
+  Scenario: list command with valid data
+    Given I have a report
+    When I run "one9 list"
+    Then the output should contain "** One9 Report **"
+    And the output should contain "Hash#select"
+    And the output should contain "4 rows in set"
+
+  Scenario: list command with invalid data
+    Given I have an invalid report
+    When I run "one9 list"
+    Then the stderr should contain "one9 error: marshal"
+
+  Scenario: list command with no data
+    Given I have a report with no data
+    When I run "one9 list"
+    Then the output should contain "No 1.9 changes found"
