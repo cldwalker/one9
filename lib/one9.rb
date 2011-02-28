@@ -9,7 +9,7 @@ require 'one9/version'
 
 module One9
   extend self
-  attr_accessor :stacks, :config, :dir
+  attr_accessor :stacks, :config, :dir, :rc
   self.stacks = Hash.new {|h,k| h[k] = [] }
   self.config = {}
 
@@ -26,7 +26,7 @@ module One9
   def load_methods
     setup
     Rc.load File.dirname(__FILE__) + '/one9/defaults.rb'
-    Rc.load('~/.one9rc') if File.exists?(File.expand_path('~/.one9rc'))
+    Rc.load(rc) if File.exists?(rc)
     Rc.meths
   end
 
@@ -45,3 +45,4 @@ module One9
 end
 
 One9.dir = ENV['ONE9_DIR']
+One9.rc = ENV['ONE9_RC'] || '~/.one9rc'

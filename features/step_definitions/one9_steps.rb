@@ -1,3 +1,11 @@
+Given /^I have no rc file$/ do
+  FileUtils.rm_f One9.rc
+end
+
+Given /^I have a rc file$/ do
+  File.open(One9.rc, 'w') {|f| f.write 'change "Module#stub", "stuuub"' }
+end
+
 Given /^I have no report$/ do
   FileUtils.rm_f One9::Report.marshal_file
 end
@@ -32,7 +40,8 @@ Then /^the output should not contain multiple reports$/ do
   all_output.should_not =~ /One9 Report.*One9 Report/m
 end
 
-Then /^the output contains all defined methods$/ do
+Then /^the output contains all default methods$/ do
+  One9::Rc.meths.clear
   meths = One9.load_methods.delete_if {|e| e.name[/pretty_print/] }
   meths.map(&:name).each do|meth|
     Then %{the output should contain "#{meth}"}

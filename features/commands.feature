@@ -74,9 +74,16 @@ Feature: Commands
     Then the output should contain "** One9 Report **"
     And the output should not contain multiple reports
 
-  Scenario: changes command
+  Scenario: changes command with rc file
+    Given I have a rc file
     When I run "one9 changes"
-    Then the output contains all defined methods
+    Then the output contains all default methods
+    And the output should contain "Module#stub"
+
+  Scenario: changes command with no rc file
+    Given I have no rc file
+    When I run "one9 changes"
+    Then the output contains all default methods
 
   Scenario: list command with valid data
     Given I have a report
