@@ -49,7 +49,8 @@ module One9
     def test(*args)
       command_help(:test, *args)
       ENV['RUBYOPT'] = '-rone9/it'
-      exec args.empty? ? 'rake test' : args.join(' ')
+      system args.empty? ? 'rake test' : args.join(' ')
+      warn "** one9: Error occurred while testing **" unless $?.success?
     end
 
     def edit(query=nil)

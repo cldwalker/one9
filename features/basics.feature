@@ -29,6 +29,6 @@ Feature: options, help and misc edge cases
     And the exit status should be 1
 
   Scenario: Print error for unexpected error
-    When I run "one9 test zzz"
+    When I run an invalid command
     Then the stderr should contain "one9 error:"
-    And the stderr should contain "zzz"
+    And the stderr should contain "moooo"

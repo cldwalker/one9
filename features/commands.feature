@@ -74,6 +74,16 @@ Feature: Commands
     Then the output should contain "** One9 Report **"
     And the output should not contain multiple reports
 
+  Scenario: test command prints error when saving fails
+    Given I am unable to save my test
+    When I run "one9 test ruby -e 'puts'"
+    Then the stderr should contain "one9: Error while saving report"
+
+  Scenario: test command with invalid Rakefile prints errors
+    Given an empty file named "Rakefile"
+    When I run "one9 test"
+    Then the stderr should contain "** one9: Error occurred while testing **"
+
   Scenario: changes command with rc file
     Given I have a rc file
     When I run "one9 changes"

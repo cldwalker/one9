@@ -31,6 +31,10 @@ Given /^I have a report with no data$/ do
   File.open(One9::Report.marshal_file, 'wb') {|f| f.write Marshal.dump([{}, {}]) }
 end
 
+Given /^I am unable to save my test$/ do
+  FileUtils.rm_rf One9.dir
+end
+
 Given /^I have the editor "([^"]*)"$/ do |editor|
   ENV['EDITOR'] = editor
 end

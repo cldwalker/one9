@@ -35,7 +35,7 @@ module One9
     end
 
     def print(meths, stacks)
-      FileUtils.touch lock_file
+      FileUtils.touch lock_file if File.exists? One9.dir
       Hirb.enable
       results = ReportMethod.create(meths, stacks)
       results = results.select {|e| e.count > 0 }
