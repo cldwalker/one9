@@ -1,8 +1,13 @@
+After do
+  FileUtils.rm_rf One9.dir
+end
+
 Given /^I have no rc file$/ do
   FileUtils.rm_f One9.rc
 end
 
 Given /^I have a rc file$/ do
+  FileUtils.mkdir_p One9.dir
   File.open(One9.rc, 'w') {|f| f.write 'change "Module#stub", "stuuub"' }
 end
 
@@ -11,15 +16,18 @@ Given /^I have no report$/ do
 end
 
 Given /^I have a report$/ do
+  FileUtils.mkdir_p One9.dir
   FileUtils.cp Dir.pwd + '/features/support/one9.marshal',
     One9::Report.marshal_file
 end
 
 Given /^I have an invalid report$/ do
+  FileUtils.mkdir_p One9.dir
   File.open(One9::Report.marshal_file, 'w') {|f| f.write '' }
 end
 
 Given /^I have a report with no data$/ do
+  FileUtils.mkdir_p One9.dir
   File.open(One9::Report.marshal_file, 'wb') {|f| f.write Marshal.dump([{}, {}]) }
 end
 
