@@ -4,7 +4,6 @@ module One9
   module Runner
     extend self
     OPTIONS = [
-      ['-d, --debug', 'Print all methods when reporting'],
       ['-v, --version', 'Print version'],
       ['-h, --help', 'Print help']
     ]
@@ -18,11 +17,11 @@ module One9
     ]
     COMMANDS_HELP = {
       :test => "[COMMAND='rake test']",
-      :list => '[QUERY]',
+      :list => '[QUERY] [-a|--all]',
       :changes => '[QUERY]',
-      :lines => '[QUERY]',
+      :lines => '[QUERY] [-a|--all]',
       :edit => '[QUERY]',
-      :quickfix => '[QUERY]'
+      :quickfix => '[QUERY] [-a|--all]'
     }
 
     def run(argv=ARGV)
@@ -78,7 +77,6 @@ module One9
       opt = {}
       while argv[0] =~ /^-/
         case option = argv.shift
-        when '-d', '--debug' then opt[:debug] = true
         when '-h', '--help'  then opt[:help] = true
         when '-v', '--version' then puts(One9::VERSION); exit
         else

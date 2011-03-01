@@ -28,7 +28,7 @@ module One9
     end
 
     def report_stack(ary)
-      One9.config[:debug] || ary[0][regexp_paths] ? ary[0] : nil
+      One9.config[:all] || ary[0][regexp_paths] ? ary[0] : nil
     end
 
     def regexp_paths

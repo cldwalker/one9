@@ -5,13 +5,13 @@ Feature: Commands
     Then the output should contain "one9 <usage>"
 
     Examples:
-      | command  | usage                      |
-      | test     | test [COMMAND='rake test'] |
-      | list     | list [QUERY]               |
-      | edit     | edit [QUERY]               |
-      | changes  | changes [QUERY]            |
-      | lines    | lines [QUERY]              |
-      | quickfix | quickfix [QUERY]           |
+      | command  | usage                        |
+      | test     | test [COMMAND='rake test']   |
+      | list     | list [QUERY] [-a\|--all]     |
+      | edit     | edit [QUERY]                 |
+      | changes  | changes [QUERY]              |
+      | lines    | lines [QUERY] [-a\|--all]    |
+      | quickfix | quickfix [QUERY] [-a\|--all] |
 
   Scenario Outline: Commands print error for no report
     Given I have no report
@@ -26,9 +26,9 @@ Feature: Commands
       | lines    |
       | quickfix |
 
-  Scenario Outline: Commands with -d option print all changes
+  Scenario Outline: Commands with -a option print all changes
     Given I have a report
-    When I run "one9 -d <command>"
+    When I run "one9 <command> -a"
     Then the output should contain "Module#public_m"
 
     Examples:

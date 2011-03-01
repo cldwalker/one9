@@ -3,15 +3,17 @@ module One9
   module Report
     extend self
 
-    def list(query=nil)
+    def list(*args)
+      parse_options(args)
       meths, stacks = setup
-      meths = query_methods(meths, query)
+      meths = query_methods(meths, args[0])
       print(meths, stacks)
     end
 
-    def lines(query=nil)
+    def lines(*args)
+      parse_options(args)
       meths, stacks = setup
-      results = method_lines(meths, stacks, query)
+      results = method_lines(meths, stacks, args[0])
       table results.map {|m,l| [m.name, l] } , :change_fields => [:method, :line]
     end
 
@@ -22,9 +24,10 @@ module One9
         :headers => {:name => 'method', :stacks => 'lines'}
     end
 
-    def quickfix(query=nil)
+    def quickfix(*args)
+      parse_options(args)
       meths, stacks = setup
-      results = method_lines(meths, stacks, query)
+      results = method_lines(meths, stacks, args[0])
       results.map! {|meth, trace|
         trace[/^([^:]+:\d+:)(.*)/] ? "#{$1} #{meth.name} - #{meth.message}" : trace
       }
@@ -61,6 +64,10 @@ module One9
     end
 
     private
+    def parse_options(args)
+      One9.config[:all] = args.delete('-a') || args.delete('--all')
+    end
+
     def table(*args)
       puts Hirb::Helpers::AutoTable.render(*args)
     end
