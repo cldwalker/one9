@@ -20,7 +20,7 @@ Given /^I have an invalid report$/ do
 end
 
 Given /^I have a report with no data$/ do
-  File.open(One9::Report.marshal_file, 'wb') {|f| f.write Marshal.dump([[], {}]) }
+  File.open(One9::Report.marshal_file, 'wb') {|f| f.write Marshal.dump([{}, {}]) }
 end
 
 Given /^I have the editor "([^"]*)"$/ do |editor|

@@ -74,8 +74,9 @@ module One9
 
     def setup
       report_exists!
-      One9.setup
-      File.open(marshal_file, 'rb'){|f| Marshal.load(f.read ) }
+      meths = One9.load_methods
+      headers, stacks = File.open(marshal_file, 'rb'){|f| Marshal.load(f.read ) }
+      [meths, stacks]
     end
 
     def query_methods(meths, query)
@@ -98,7 +99,7 @@ module One9
 
     def save(meths, stacks)
       stacks_copy = stacks.inject({}) {|h,(k,v)| h.merge!(k => v) }
-      File.open(marshal_file, 'wb') {|f| f.write Marshal.dump([meths, stacks_copy]) }
+      File.open(marshal_file, 'wb') {|f| f.write Marshal.dump([{}, stacks_copy]) }
     rescue Exception => err
       warn "one9: Error while saving report:\n" +
       "#{err.class}: #{err.message}\n    #{err.backtrace.slice(0,10).join("\n    ")}"

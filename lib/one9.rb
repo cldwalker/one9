@@ -24,15 +24,11 @@ module One9
   end
 
   def load_methods
-    setup
+    # ensure all changes can be loaded
+    %w{date time}.each {|e| require e }
     Rc.load File.dirname(__FILE__) + '/one9/defaults.rb'
     Rc.load(rc) if File.exists?(rc)
     Rc.meths
-  end
-
-  # ensure all changes can be loaded
-  def setup
-    %w{date time}.each {|e| require e }
   end
 
   def dir

@@ -19,7 +19,7 @@ module One9
     end
 
     def stacks
-      @stacks ||= self.class.stacks[name].map {|e| report_stack(e) }.
+      @stacks ||= Array(self.class.stacks[name]).map {|e| report_stack(e) }.
         compact.map {|e| e.sub(CURRENT_DIRS_REGEX, '') }.uniq
     end
 
