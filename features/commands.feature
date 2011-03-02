@@ -111,3 +111,13 @@ Feature: Commands
     Given I have a report with no data
     When I run "one9 list"
     Then the output should contain "No 1.9 changes found"
+
+  Scenario: list command in a Rails project
+    Given I'm in a Rails environment
+    And I have a Rails report
+    When I run "one9 list"
+    Then the output should contain "** One9 Report **"
+    And the output should contain "app/models"
+    And the output should contain "config/"
+    And the output should contain "lib/"
+    And the output should not contain "vendor/"

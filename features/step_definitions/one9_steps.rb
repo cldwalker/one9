@@ -31,6 +31,21 @@ Given /^I have a report with no data$/ do
   File.open(One9::Report.marshal_file, 'wb') {|f| f.write Marshal.dump([{}, {}]) }
 end
 
+Given "I have a Rails report" do
+  FileUtils.mkdir_p One9.dir
+  stacks = {
+    "Module#instance_methods" => [['./app/models/blah.rb:11']],
+    "Module#constants" => [['./config/initializers/blah.rb:21']],
+    "Kernel.global_variables" => [['./vendor/gems/blah.rb:31']],
+    "Hash#to_s" => [['./lib/blah.rb:41']],
+  }
+  File.open(One9::Report.marshal_file, 'wb') {|f| f.write Marshal.dump([{}, stacks]) }
+end
+
+Given "I'm in a Rails environment" do
+  Given %{an empty file named "config/environment.rb"}
+end
+
 Given /^I am unable to save my test$/ do
   FileUtils.rm_rf One9.dir
 end

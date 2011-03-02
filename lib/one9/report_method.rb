@@ -3,10 +3,14 @@ module One9
     CURRENT_DIRS = [Dir.pwd + '/', './']
     CURRENT_DIRS_REGEX = Regexp.new "^#{Regexp.union(CURRENT_DIRS)}"
 
-    class <<self; attr_accessor :stacks; end
+    class <<self; attr_accessor :stacks, :allowed_paths, :report_paths, :regexp_paths; end
+    self.allowed_paths = ['lib/']
 
     def self.create(meths, stacks)
       self.stacks = stacks
+      self.allowed_paths += ['app/', 'config/'] if File.exists? 'config/environment.rb'
+      self.report_paths = CURRENT_DIRS.map {|e| allowed_paths.map {|f| e + f } }.flatten
+      self.regexp_paths = Regexp.new "^#{Regexp.union(report_paths)}"
       meths.map {|e| new(e) }
     end
 
@@ -28,15 +32,7 @@ module One9
     end
 
     def report_stack(ary)
-      One9.config[:all] || ary[0][regexp_paths] ? ary[0] : nil
-    end
-
-    def regexp_paths
-      @regexp_paths ||= Regexp.new "^#{Regexp.union(report_paths)}"
-    end
-
-    def report_paths
-      @report_paths ||= CURRENT_DIRS.map {|e| e + 'lib/' }
+      One9.config[:all] || ary[0][self.class.regexp_paths] ? ary[0] : nil
     end
   end
 end
