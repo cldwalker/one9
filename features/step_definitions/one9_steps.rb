@@ -17,8 +17,14 @@ end
 
 Given /^I have a report$/ do
   FileUtils.mkdir_p One9.dir
-  FileUtils.cp Dir.pwd + '/features/support/one9.marshal',
-    One9::Report.marshal_file
+  stacks = {
+    "Module#instance_methods" => [['./lib/blah.rb:11']],
+    "Module#private_instance_methods" => [['./lib/blah.rb:21']],
+    "Hash#to_s" => [['./lib/blah.rb:31']],
+    "Hash#select" => [['./lib/blah.rb:41']],
+    "Module#public_methods" => [['./test/blah.rb:51']]
+  }
+  File.open(One9::Report.marshal_file, 'wb') {|f| f.write Marshal.dump([{}, stacks]) }
 end
 
 Given /^I have an invalid report$/ do

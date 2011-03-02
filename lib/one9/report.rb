@@ -29,7 +29,7 @@ module One9
       meths, stacks = setup
       results = method_lines(meths, stacks, args[0])
       results.map! {|meth, trace|
-        trace[/^([^:]+:\d+:)(.*)/] ? "#{$1} #{meth.name} - #{meth.message}" : trace
+        trace[/^([^:]+:\d+:?)(.*)/] ? "#{$1} #{meth.name} - #{meth.message}" : trace
       }
       puts results
     end
