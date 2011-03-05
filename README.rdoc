@@ -22,7 +22,7 @@ Run your tests using ruby 1.8 in the root directory of a gem or Rails app:
     # Only run model specs
     $ one9 test rspec spec/models
 
-After your tests, you'll see a report. Here's what it looks like when run on {boson}[http://github.com/cldwalker/boson]:
+After your tests, you'll see a report. Here's what it all looks like when run on {boson}[http://github.com/cldwalker/boson]:
 
     $ one9 test
     ............................................................................................................................................................................................................................................................................................................
@@ -70,8 +70,8 @@ If your editor isn't supported, you can still view the possible changes:
 
 == Configure
 
-one9 comes with a decent list of 1.9 changes and descriptions. However, if you'd like to add your
-own changes, you can add them to your ~/.one9rc. For example:
+one9 comes with a decent list of 1.9 changes and descriptions. If you'd like to add your
+own changes, add them to your ~/.one9rc. For example:
 
     # For methods that have changed in 1.9
     change 'Class#instance_method', 'Some description'
@@ -91,15 +91,19 @@ tool. Some ideas for future commands:
 
 * grep command to grep code for changed methods. Basically for porting test-deprived code.
 * info command to explain a method's change in detail with examples and possible solutions
-* rails command to port a rails app and all its gem dependencies.
+* rails command to ease porting a rails app and all its dependencies.
+* automating code changes like "python's 2to3":http://docs.python.org/py3k/library/2to3.html
 
 If you're interested in implementing these or other such commands, please do contribute.
 
 == Limitations
-The following methods can't be spied on: Object#=~, String#[], String#to_a, String#each. For more,
-see the {defaults file}[[https://github.com/cldwalker/one9/blob/master/lib/one9/defaults.rb].
+* The following methods can't be spied on: Object#=~, String#[], String#to_a, String#each. For more,
+  see the {defaults file}[[https://github.com/cldwalker/one9/blob/master/lib/one9/defaults.rb].
+* Only one set of changes is saved at a time. This means running `one9 test` will overwrite your
+  previous saved changes.
 
 == 1.9 Links
 * http://eigenclass.org/hiki/Changes+in+Ruby+1.9
 * http://svn.ruby-lang.org/repos/ruby/tags/v1_9_1_0/NEWS
 * http://blog.grayproductions.net/articles/understanding_m17n
+* http://dablog.rubypal.com/2009/1/14/10-things-to-be-aware-of-in-moving-to-ruby-1-9
