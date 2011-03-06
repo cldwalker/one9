@@ -28,7 +28,7 @@ module One9
       One9.config.merge! parse_options(argv)
       if One9.config[:help] || argv.empty?
         help
-      elsif public_methods.include? argv[0]
+      elsif public_methods.map {|e| e.to_s }.include? argv[0]
         send(*argv)
       else
         abort "one9: Invalid command `#{argv[0]}'"
