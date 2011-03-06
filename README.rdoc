@@ -107,3 +107,6 @@ If you're interested in implementing these or other such commands, please do con
 * http://svn.ruby-lang.org/repos/ruby/tags/v1_9_1_0/NEWS
 * http://blog.grayproductions.net/articles/understanding_m17n
 * http://dablog.rubypal.com/2009/1/14/10-things-to-be-aware-of-in-moving-to-ruby-1-9
+
+== Links
+* http://tagaholic.me/2011/03/05/one9-upgrade-to-ruby-19-now.html
