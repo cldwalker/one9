@@ -1,2 +1,5 @@
+== 0.1.1
+* Fix for 1.9
+
 == 0.1.0
 * Initial release!
