@@ -48,7 +48,7 @@ module One9
 
     def test(*args)
       command_help(:test, *args)
-      ENV['RUBYOPT'] = '-rone9/it'
+      ENV['RUBYOPT'] = "-I#{File.dirname File.dirname(__FILE__)} -rone9/it"
       system args.empty? ? 'rake test' : args.join(' ')
       warn "** one9: Error occurred while testing **" unless $?.success?
     end
