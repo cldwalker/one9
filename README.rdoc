@@ -8,6 +8,9 @@ can open this list in an editor. So what's your excuse for not upgrading to 1.9.
 
     $ gem install one9
 
+If you're using bundler (the default in rails3), add one9 to your Gemfile if your tests
+are invoked by bundler i.e. one9 test, one9 test rake * or one9 test bundle exec *.
+
 == Usage
 
 Run your tests using ruby 1.8 in the root directory of a gem or Rails app:
