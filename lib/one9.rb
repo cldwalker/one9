@@ -41,4 +41,4 @@ module One9
 end
 
 One9.dir = ENV['ONE9_DIR']
-One9.rc = ENV['ONE9_RC'] || '~/.one9rc'
+One9.rc = ENV['ONE9_RC'] || File.expand_path('~/.one9rc')
