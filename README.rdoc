@@ -105,6 +105,9 @@ If you're interested in implementing these or other such commands, please do con
 * Only one set of changes is saved at a time. This means running `one9 test` will overwrite your
   previous saved changes.
 
+== Credits
+* castiglione for bug fix.
+
 == 1.9 Links
 * http://eigenclass.org/hiki/Changes+in+Ruby+1.9
 * http://svn.ruby-lang.org/repos/ruby/tags/v1_9_1_0/NEWS
