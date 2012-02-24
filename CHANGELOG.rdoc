@@ -1,5 +1,8 @@
-== 0.1.4
+== 0.1.5
 * Update dev dependency
+
+== 0.1.4
+* $ONE9_RC bug fix
 
 == 0.1.3
 * Really fix one9 test for rubygems
