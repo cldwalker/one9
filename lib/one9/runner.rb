@@ -1,60 +1,53 @@
+require 'boson/runner'
 require 'one9'
 
 module One9
-  module Runner
-    extend self
-    OPTIONS = [
-      ['-v, --version', 'Print version'],
-      ['-h, --help', 'Print help']
-    ]
-    COMMANDS = [
-      ['test', 'Spy on tests and print report.'],
-      ['list', 'Print 1.9 changes report from last test'],
-      ['edit', 'Place 1.9 changes from last test into an editor'],
-      ['changes', 'Print all known 1.9 changes'],
-      ['lines', 'Print 1.9 changes by line from last test'],
-      ['quickfix', 'Generate 1.9 change list formatted for editors']
-    ]
-    COMMANDS_HELP = {
-      :test => "[COMMAND='rake test']",
-      :list => '[QUERY] [-a|--all]',
-      :changes => '[QUERY]',
-      :lines => '[QUERY] [-a|--all]',
-      :edit => '[QUERY]',
-      :quickfix => '[QUERY] [-a|--all]'
+  class Runner < Boson::Runner
+    GLOBAL_OPTIONS[:version] = {
+      :type => :boolean, :desc => 'Print version'
     }
 
-    def run(argv=ARGV)
-      One9.config.merge! parse_options(argv)
-      if One9.config[:help] || argv.empty?
-        help
-      elsif public_methods.map {|e| e.to_s }.include? argv[0]
-        send(*argv)
-      else
-        abort "one9: Invalid command `#{argv[0]}'"
-      end
+    def self.execute(cmd, args, options)
+      options[:version] ? puts(One9::VERSION) :
+        super
     rescue NoReportError
       abort("one9 has no report. `one9 test` your project first.")
     rescue
       warn("one9 error: #{$!}\n  #{$!.backtrace[0]}")
     end
 
-    [:list, :lines, :changes, :quickfix].each do |meth|
-      define_method(meth) {|*args|
-        command_help(meth, *args)
-        Report.send(meth, *args)
-      }
+    option :all, :type => :boolean , :desc => "Displays full stack"
+    desc 'Print 1.9 changes report from last test'
+    def list(query=nil, options={})
+      Report.list(query, options)
     end
 
-    def test(*args)
-      command_help(:test, *args)
+    option :all, :type => :boolean , :desc => "Displays full stack"
+    desc 'Print 1.9 changes by line from last test'
+    def lines(query=nil, options={})
+      Report.lines(query, options)
+    end
+
+    desc 'Print all known 1.9 changes'
+    def changes(query=nil)
+      Report.changes(query)
+    end
+
+    option :all, :type => :boolean , :desc => "Displays full stack"
+    desc 'Generate 1.9 change list formatted for editors'
+    def quickfix(query=nil, options={})
+      Report.quickfix(query, options)
+    end
+
+    desc 'Spy on tests and print report.'
+    def test(*commands)
       ENV['RUBYOPT'] = "-I#{File.dirname File.dirname(__FILE__)} -rone9/it"
-      system args.empty? ? 'rake test' : args.join(' ')
+      system commands.empty? ? 'rake test' : commands.join(' ')
       warn "** one9: Error occurred while testing **" unless $?.success?
     end
 
+    desc 'Place 1.9 changes from last test into an editor'
     def edit(query=nil)
-      command_help(:edit, query)
       Report.report_exists!
       editor = ENV['EDITOR'] || 'vim'
       if editor[/^vim/]
@@ -63,41 +56,6 @@ module One9
       else
         puts "No support for #{editor} yet. Patches welcome :)"
       end
-    end
-
-    private
-    def command_help(cmd, *args)
-      if %w{-h --help}.include? args[0]
-        msg = "one9 #{cmd}"
-        msg += " " + COMMANDS_HELP[cmd] if COMMANDS_HELP[cmd]
-        abort msg
-      end
-    end
-
-    def parse_options(argv)
-      opt = {}
-      while argv[0] =~ /^-/
-        case option = argv.shift
-        when '-h', '--help'  then opt[:help] = true
-        when '-v', '--version' then puts(One9::VERSION); exit
-        else
-          warn "one9: invalid option `#{option}'"
-        end
-      end
-      opt
-    end
-
-    def help
-      puts "one9 [OPTIONS] COMMAND [ARGS]", "",
-        "Commands:", format_arr(COMMANDS), "",
-        "For more information on a command use:", "  one9 COMMAND -h", "",
-        "Options:", format_arr(OPTIONS)
-    end
-
-    def format_arr(arr)
-      zero = arr.map {|e| e[0].length }.max
-      one = arr.map {|e| e[1].length }.max
-      arr.map {|k,v| "  %-*s  %-*s" % [zero, k, one, v] }
     end
   end
 end

@@ -5,13 +5,13 @@ Feature: Commands
     Then the output should contain "one9 <usage>"
 
     Examples:
-      | command  | usage                        |
-      | test     | test [COMMAND='rake test']   |
-      | list     | list [QUERY] [-a\|--all]     |
-      | edit     | edit [QUERY]                 |
-      | changes  | changes [QUERY]              |
-      | lines    | lines [QUERY] [-a\|--all]    |
-      | quickfix | quickfix [QUERY] [-a\|--all] |
+         | command  | usage            |
+         | test     | test *COMMANDS   |
+         | list     | list [QUERY]     |
+         | edit     | edit [QUERY]     |
+         | changes  | changes [QUERY]  |
+         | lines    | lines [QUERY]    |
+         | quickfix | quickfix [QUERY] |
 
   Scenario Outline: Commands print error for no report
     Given I have no report

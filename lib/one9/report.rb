@@ -65,7 +65,7 @@ module One9
 
     private
     def parse_options(args)
-      One9.config[:all] = args.delete('-a') || args.delete('--all')
+      One9.config[:all] = args.pop[:all]
     end
 
     def table(*args)

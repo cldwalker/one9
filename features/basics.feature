@@ -2,7 +2,7 @@ Feature: options, help and misc edge cases
 
   Scenario Outline: Print help
     When I run "<command>"
-    Then the output should contain "one9 [OPTIONS] COMMAND"
+    Then the output should contain "one9 COMMAND [ARGS]"
 
     Examples:
       | command     |
@@ -21,11 +21,17 @@ Feature: options, help and misc edge cases
 
   Scenario: Print error for invalid option
     When I run "one9 -z"
-    Then the stderr should contain "one9: invalid option `-z'"
+    Then the stderr should contain:
+      """
+      Could not find command "-z"
+      """
 
   Scenario: Print error for invalid command
     When I run "one9 blah"
-    Then the output should match /^one9: Invalid command `blah'/
+    Then the stderr should contain:
+      """
+      Could not find command "blah"
+      """
     And the exit status should be 1
 
   Scenario: Print error for unexpected error
